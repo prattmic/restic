@@ -63,7 +63,7 @@ func New(ctx context.Context, repo restic.Repository, ignorePacks restic.IDSet, 
 
 		j := job.Result.(list.Result)
 
-		debug.Log("pack %v contains %d blobs", packID.Str(), len(j.Entries()))
+		debug.Log("pack %v contains %d blobs: %+v", packID.Str(), len(j.Entries()), j.Entries())
 
 		err := idx.AddPack(packID, j.Size(), j.Entries())
 		if err != nil {
