@@ -35,6 +35,7 @@ type Backend struct {
 	bucketName   string
 	prefix       string
 	listMaxItems int
+	chunkSize    int
 	backend.Layout
 }
 
@@ -89,6 +90,7 @@ func open(cfg Config) (*Backend, error) {
 			Join: path.Join,
 		},
 		listMaxItems: defaultListMaxItems,
+		chunkSize:    cfg.ChunkSize,
 	}
 
 	return be, nil
@@ -214,10 +216,15 @@ func (be *Backend) Save(ctx context.Context, h restic.Handle, rd io.Reader) (err
 
 	debug.Log("InsertObject(%v, %v)", be.bucketName, objName)
 
+	var mo []googleapi.MediaOption
+	if be.chunkSize != 0 {
+		mo = append(mo, googleapi.ChunkSize(be.chunkSize))
+	}
+
 	info, err := be.service.Objects.Insert(be.bucketName,
 		&storage.Object{
 			Name: objName,
-		}).Media(rd).Do()
+		}).Media(rd, mo...).Do()
 
 	be.sem.ReleaseToken()
 

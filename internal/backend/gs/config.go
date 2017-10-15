@@ -17,6 +17,11 @@ type Config struct {
 	Prefix      string
 
 	Connections uint `option:"connections" help:"set a limit for the number of concurrent connections (default: 20)"`
+
+	// ChunkSize sets the GCS media ChunkSize, which defaults to 8MB when
+	// not set. See
+	// https://godoc.org/google.golang.org/api/googleapi#ChunkSize.
+	ChunkSize int `option:"chunksize" help:"sets the chunk size (in bytes) for blob uploads (default: 8MB)"`
 }
 
 // NewConfig returns a new Config with the default values filled in.
